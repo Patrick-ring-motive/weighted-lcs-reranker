@@ -1,11 +1,11 @@
-const len = x => x.length ?? x.size;
+
 
 function lcs(seq1, seq2) {
   "use strict";
   if (seq1 == null || seq2 == null) return 0;
   if (seq1 === seq2) return len(seq1) ? seq1.length : [...seq1].length;
-  let array1 = len(seq1) ? seq1 : [...seq1];
-  let array2 = len(seq2) ? seq2 : [...seq2];
+  let array1 = [...seq1];
+  let array2 = [...seq2];
   if (array2.length > array1.length) {
     [array1, array2] = [array2, array1];
   }
