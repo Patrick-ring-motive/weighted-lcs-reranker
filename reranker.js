@@ -42,3 +42,10 @@ function lcs(seq1, seq2) {
 const weightedLcs=(seq1,seq2)=>{
   return lcs(seq1,seq2) * Math.min(seq1.length,seq2.length) / Math.max(seq1.length,seq2.length);
 };
+
+export const rank = (query,results)=>{
+  return results.map(result=>{
+    result.score = weightedLcs(query,result.text);
+    return result;
+  }).sort((x,y)=>y-x);
+};
