@@ -1,5 +1,3 @@
-
-
 function lcs(seq1, seq2) {
   "use strict";
   if (seq1 == null || seq2 == null) return 0;
@@ -39,13 +37,13 @@ function lcs(seq1, seq2) {
   return score;
 };
 
-const weightedLcs=(seq1,seq2)=>{
-  return lcs(seq1,seq2) * Math.min(seq1.length,seq2.length) / Math.max(seq1.length,seq2.length);
+const weightedLcs = (seq1, seq2) => {
+  return lcs(seq1, seq2) * Math.min(seq1.length, seq2.length) / Math.max(seq1.length, seq2.length);
 };
 
-export const rank = (query,results)=>{
-  return results.map(result=>{
-    result.score = weightedLcs(query,result.text);
+export const rank = (query, results) => {
+  return results.map(result => {
+    result.score = weightedLcs(query, result.text);
     return result;
-  }).sort((x,y)=>y-x);
+  }).sort((x, y) => y - x);
 };
