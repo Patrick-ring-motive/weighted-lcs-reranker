@@ -15,7 +15,6 @@ function lcs(seq1, seq2) {
   const width = arr2_length + 1;
   const height = arr1_length + 1;
 
-  // Two rolling rows instead of (arr1_length + 1) rows
   let prev = new DPArray(width);
   let curr = new DPArray(width);
 
