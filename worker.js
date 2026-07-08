@@ -14,7 +14,9 @@
  * Note: GET splits `results` on commas, so candidates can't contain commas —
  * use POST for arbitrary text or to preserve extra fields on each result.
  */
-import { rank } from "./reranker.js";
+import {
+  rank
+} from "./reranker.js";
 
 const isString = x => typeof x === "string" || x instanceof String;
 const isArray = x => Array.isArray(x) || x instanceof Array;
@@ -22,13 +24,17 @@ const isArray = x => Array.isArray(x) || x instanceof Array;
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data, null, 2), {
     status,
-    headers: { "Content-Type": "application/json" }
+    headers: {
+      "Content-Type": "application/json"
+    }
   });
 
 // Normalize results into the [{ text, ... }] shape rank expects. Accepts an
 // array of strings or an array of objects that already carry a `text` field.
 const normalizeResults = (results) =>
-  results.map(item => (isString(item) ? { text: String(item) } : item));
+  results.map(item => (isString(item) ? {
+    text: String(item)
+  } : item));
 
 export default {
   rank,
@@ -48,19 +54,30 @@ export default {
         query = body?.query;
         results = body?.results;
       } else {
-        return json({ error: "Method not allowed. Use GET or POST." }, 405);
+        return json({
+          error: "Method not allowed. Use GET or POST."
+        }, 405);
       }
 
       if (!isString(query))
-        return json({ error: 'Missing or invalid "query". Must be a string.' }, 400);
+        return json({
+          error: 'Missing or invalid "query". Must be a string.'
+        }, 400);
 
       if (!isArray(results))
-        return json({ error: 'Missing or invalid "results". Must be an array.' }, 400);
+        return json({
+          error: 'Missing or invalid "results". Must be an array.'
+        }, 400);
 
       const ranked = rank(query, normalizeResults(results));
-      return json({ results: ranked });
+      return json({
+        results: ranked
+      });
     } catch (error) {
-      return json({ error: "Internal server error", message: error.message }, 500);
+      return json({
+        error: "Internal server error",
+        message: error.message
+      }, 500);
     }
   }
 };
