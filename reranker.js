@@ -36,8 +36,8 @@ function lcs(seq1, seq2) {
   return score;
 }
 
-const lcsMatch = (seq1,seq2)=>{
-  return lcs(seq1,seq2) >= Math.floor(Math.max(seq1.length,seq2.length) * 0.8);
+const lcsMatch = (seq1, seq2) => {
+  return lcs(seq1, seq2) >= Math.floor(Math.max(seq1.length, seq2.length) * 0.8);
 };
 
 const weightedLcs = (seq1 = [], seq2 = []) => {
