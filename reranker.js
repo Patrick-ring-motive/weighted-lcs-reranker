@@ -48,6 +48,15 @@ const weightedLcs = (seq1 = [], seq2 = []) => {
   );
 };
 
+export const lcsInfo = (se1,seq2) =>{
+  const minLength = Math.min(seq1?.length || 0, seq2?.length || 0) || 0;
+  const maxLength = Math.max(seq1?.length || 0, seq2?.length || 0) || 0;
+  const lcsLength = lcs(seq1,seq2);
+  const lcsMatch = lcsLength >= Math.floor(0.8 * maxLength);
+  const lcsWeight = lcsLength * minLength / (maxLength || Math.MIN_SAFE_INTEGER);
+  return {minLength,maxLength,lcsLength,lcsMatch,lcsWeight};
+};
+
 export const rank = (query = "", results = []) => {
   return structuredClone(results)
     .map((result) => {
