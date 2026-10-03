@@ -1,45 +1,51 @@
 // LCS length of word against doc[start, end)
 function lcsLength(word, doc, start, end) {
-    const wordLength = word.length;
-    const row = new Uint32Array(wordLength + 1);
-    for (let docIndex = start; docIndex < end; ++docIndex) {
-        let diagonal = 0; // row[wordIndex - 1] from the previous doc char
-        const docChar = doc[docIndex];
-        for (let wordIndex = 1; wordIndex <= wordLength; ++wordIndex) {
-            const above = row[wordIndex]; // previous doc char, same wordIndex
-            row[wordIndex] = word[wordIndex - 1] === docChar
-                ? diagonal + 1
-                : Math.max(above, row[wordIndex - 1]);
-            diagonal = above;
-        }
+  const wordLength = word.length;
+  const row = new Uint32Array(wordLength + 1);
+  for (let docIndex = start; docIndex < end; ++docIndex) {
+    let diagonal = 0; // row[wordIndex - 1] from the previous doc char
+    const docChar = doc[docIndex];
+    for (let wordIndex = 1; wordIndex <= wordLength; ++wordIndex) {
+      const above = row[wordIndex]; // previous doc char, same wordIndex
+      row[wordIndex] = word[wordIndex - 1] === docChar ?
+        diagonal + 1 :
+        Math.max(above, row[wordIndex - 1]);
+      diagonal = above;
     }
-    return row[wordLength];
+  }
+  return row[wordLength];
 }
 
 // Best word by windowed LCS. Window = word length + maxGap.
 function bestWord(words, doc) {
-    let best = { word: null, score: -1 };
-    for (const word of words) {
-        const maxGap = word.length;
-        const wordLength = word.length;
-        if (!wordLength) continue;
-        const span = wordLength + maxGap;
-        let top = 0;
-        const lastStart = Math.max(0, doc.length - span);
-        for (let start = 0; start <= lastStart; ++start) {
-            const length = lcsLength(
-                word,
-                doc,
-                start,
-                Math.min(doc.length, start + span)
-            );
-            if (length > top) {
-                top = length;
-                if (top === wordLength) break;
-            }
-        }
-        const score = top / wordLength;
-        if (score > best.score) best = { word, score };
+  let best = {
+    word: null,
+    score: -1
+  };
+  for (const word of words) {
+    const maxGap = word.length;
+    const wordLength = word.length;
+    if (!wordLength) continue;
+    const span = wordLength + maxGap;
+    let top = 0;
+    const lastStart = Math.max(0, doc.length - span);
+    for (let start = 0; start <= lastStart; ++start) {
+      const length = lcsLength(
+        word,
+        doc,
+        start,
+        Math.min(doc.length, start + span)
+      );
+      if (length > top) {
+        top = length;
+        if (top === wordLength) break;
+      }
     }
-    return best;
+    const score = top / wordLength;
+    if (score > best.score) best = {
+      word,
+      score
+    };
+  }
+  return best;
 }
