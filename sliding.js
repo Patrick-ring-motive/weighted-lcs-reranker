@@ -1,57 +1,45 @@
-/**
- * Returns the length of the LCS constrained to a diagonal window.
- *
- * A[i] and B[j] may only match when |i - j| < window.
- *
- * Time:  O(min(n, m) * window)
- * Space: O(window)
- *
- * @param {Array} a
- * @param {Array} b
- * @param {number} window
- * @param {(a: *, b: *) => boolean} [equal]
- * @returns {number}
- */
-function lcsWindowCount(a, b, window, equal = (a, b) => a === b) {
-    if (!a?.length || !b?.length) {
-        return 0;
-    }
-
-    if (b.length > a.length) {
-        [a, b] = [b, a];
-    }
-    window ||= b.length * 2;
-    const m = b.length;
-
-    let previous = new Uint32Array(m + 1);
-    let current = new Uint32Array(m + 1);
-    const a_len = a.length + 1;
-    for (let i = 1; i <= a_len; ++i) {
-        const start = Math.max(1, i - window + 1);
-        const end = Math.min(m, i + window - 1);
-
-        /*
-         * Values outside the current band cannot contribute.
-         * The zero at start - 1 represents the left boundary.
-         */
-        for (let j = start; j <= end; ++j) {
-            let value = Math.max(
-                previous[j],
-                current[j - 1]
-            );
-
-            if (equal(a[i - 1], b[j - 1])) {
-                value = Math.max(
-                    value,
-                    previous[j - 1] + 1
-                );
-            }
-
-            current[j] = value;
+// LCS length of word against doc[start, end)
+function lcsLength(word, doc, start, end) {
+    const wordLength = word.length;
+    const row = new Uint32Array(wordLength + 1);
+    for (let docIndex = start; docIndex < end; ++docIndex) {
+        let diagonal = 0; // row[wordIndex - 1] from the previous doc char
+        const docChar = doc[docIndex];
+        for (let wordIndex = 1; wordIndex <= wordLength; ++wordIndex) {
+            const above = row[wordIndex]; // previous doc char, same wordIndex
+            row[wordIndex] = word[wordIndex - 1] === docChar
+                ? diagonal + 1
+                : Math.max(above, row[wordIndex - 1]);
+            diagonal = above;
         }
-
-        [previous, current] = [current, previous];
     }
+    return row[wordLength];
+}
 
-    return previous[m];
+// Best word by windowed LCS. Window = word length + maxGap.
+function bestWord(words, doc) {
+    let best = { word: null, score: -1 };
+    for (const word of words) {
+        const maxGap = word.length;
+        const wordLength = word.length;
+        if (!wordLength) continue;
+        const span = wordLength + maxGap;
+        let top = 0;
+        const lastStart = Math.max(0, doc.length - span);
+        for (let start = 0; start <= lastStart; ++start) {
+            const length = lcsLength(
+                word,
+                doc,
+                start,
+                Math.min(doc.length, start + span)
+            );
+            if (length > top) {
+                top = length;
+                if (top === wordLength) break;
+            }
+        }
+        const score = top / wordLength;
+        if (score > best.score) best = { word, score };
+    }
+    return best;
 }
