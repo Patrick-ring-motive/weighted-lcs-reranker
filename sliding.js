@@ -52,45 +52,51 @@ function bestLcsWord(words, doc) {
 
 // Max multiset overlap between word and any window of `span` doc chars.
 function bestWindowOverlap(word, doc, span) {
-    const wordLength = word.length;
-    const needed = new Map();
-    for (const char of word) needed.set(char, (needed.get(char) ?? 0) + 1);
-    const inWindow = new Map();
-    for (const char of needed.keys()) inWindow.set(char, 0);
+  const wordLength = word.length;
+  const needed = new Map();
+  for (const char of word) needed.set(char, (needed.get(char) ?? 0) + 1);
+  const inWindow = new Map();
+  for (const char of needed.keys()) inWindow.set(char, 0);
 
-    let overlap = 0;
-    let top = 0;
-    for (let docIndex = 0; docIndex < doc.length; ++docIndex) {
-        const entering = doc[docIndex];
-        const enteringNeeded = needed.get(entering);
-        if (enteringNeeded !== undefined) {
-            const count = inWindow.get(entering);
-            if (count < enteringNeeded) ++overlap; // still useful, not surplus
-            inWindow.set(entering, count + 1);
-        }
-        if (docIndex >= span) {
-            const leaving = doc[docIndex - span];
-            const leavingNeeded = needed.get(leaving);
-            if (leavingNeeded !== undefined) {
-                const count = inWindow.get(leaving) - 1;
-                inWindow.set(leaving, count);
-                if (count < leavingNeeded) --overlap; // lost a useful one
-            }
-        }
-        if (overlap > top) {
-            top = overlap;
-            if (top === wordLength) break;
-        }
+  let overlap = 0;
+  let top = 0;
+  for (let docIndex = 0; docIndex < doc.length; ++docIndex) {
+    const entering = doc[docIndex];
+    const enteringNeeded = needed.get(entering);
+    if (enteringNeeded !== undefined) {
+      const count = inWindow.get(entering);
+      if (count < enteringNeeded) ++overlap; // still useful, not surplus
+      inWindow.set(entering, count + 1);
     }
-    return top;
+    if (docIndex >= span) {
+      const leaving = doc[docIndex - span];
+      const leavingNeeded = needed.get(leaving);
+      if (leavingNeeded !== undefined) {
+        const count = inWindow.get(leaving) - 1;
+        inWindow.set(leaving, count);
+        if (count < leavingNeeded) --overlap; // lost a useful one
+      }
+    }
+    if (overlap > top) {
+      top = overlap;
+      if (top === wordLength) break;
+    }
+  }
+  return top;
 }
 
 function bestWord(words, doc, spanFor = word => word.length * 2) {
-    let best = { word: null, score: -1 };
-    for (const word of words) {
-        if (!word.length) continue;
-        const score = bestWindowOverlap(word, doc, spanFor(word)) / word.length;
-        if (score > best.score) best = { word, score };
-    }
-    return best;
+  let best = {
+    word: null,
+    score: -1
+  };
+  for (const word of words) {
+    if (!word.length) continue;
+    const score = bestWindowOverlap(word, doc, spanFor(word)) / word.length;
+    if (score > best.score) best = {
+      word,
+      score
+    };
+  }
+  return best;
 }
