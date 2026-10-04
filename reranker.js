@@ -37,52 +37,52 @@ function lcs(seq1, seq2) {
 }
 
 function unorderedWindowOverlap(seq1, seq2) {
-    let pattern = [...(seq1 ?? [])];
-    let text = [...(seq2 ?? [])];
-    if (text.length < pattern.length) [pattern, text] = [text, pattern];
+  let pattern = [...(seq1 ?? [])];
+  let text = [...(seq2 ?? [])];
+  if (text.length < pattern.length)[pattern, text] = [text, pattern];
 
-    const patternLength = pattern.length;
-    if (!patternLength) return 0;
-    const windowSize = patternLength * 2;
+  const patternLength = pattern.length;
+  if (!patternLength) return 0;
+  const windowSize = patternLength * 2;
 
-    const needed = new Map();
-    for (let index = 0; index !== patternLength; ++index) {
-        const item = pattern[index];
-        needed.set(item, (needed.get(item) ?? 0) + 1);
+  const needed = new Map();
+  for (let index = 0; index !== patternLength; ++index) {
+    const item = pattern[index];
+    needed.set(item, (needed.get(item) ?? 0) + 1);
+  }
+  const inWindow = new Map();
+  for (const item of needed.keys()) inWindow.set(item, 0);
+
+  let overlap = 0;
+  let best = 0;
+  const textLength = text.length;
+  for (let index = 0; index !== textLength; ++index) {
+    const entering = text[index];
+    const enteringNeeded = needed.get(entering);
+    if (enteringNeeded !== undefined) {
+      const count = inWindow.get(entering);
+      if (count < enteringNeeded) ++overlap;
+      inWindow.set(entering, count + 1);
     }
-    const inWindow = new Map();
-    for (const item of needed.keys()) inWindow.set(item, 0);
-
-    let overlap = 0;
-    let best = 0;
-    const textLength = text.length;
-    for (let index = 0; index !== textLength; ++index) {
-        const entering = text[index];
-        const enteringNeeded = needed.get(entering);
-        if (enteringNeeded !== undefined) {
-            const count = inWindow.get(entering);
-            if (count < enteringNeeded) ++overlap;
-            inWindow.set(entering, count + 1);
-        }
-        if (index >= windowSize) {
-            const leaving = text[index - windowSize];
-            const leavingNeeded = needed.get(leaving);
-            if (leavingNeeded !== undefined) {
-                const count = inWindow.get(leaving) - 1;
-                inWindow.set(leaving, count);
-                if (count < leavingNeeded) --overlap;
-            }
-        }
-        if (overlap > best) {
-            best = overlap;
-            if (best === patternLength) break;
-        }
+    if (index >= windowSize) {
+      const leaving = text[index - windowSize];
+      const leavingNeeded = needed.get(leaving);
+      if (leavingNeeded !== undefined) {
+        const count = inWindow.get(leaving) - 1;
+        inWindow.set(leaving, count);
+        if (count < leavingNeeded) --overlap;
+      }
     }
-    return best;
+    if (overlap > best) {
+      best = overlap;
+      if (best === patternLength) break;
+    }
+  }
+  return best;
 }
 
 const boundedLcs = (seq1, seq2) => {
-  return Math.min(unorderedWindowOverlap(seq1,seq2),lcs(seq1,seq2));
+  return Math.min(unorderedWindowOverlap(seq1, seq2), lcs(seq1, seq2));
 };
 
 const lcsMatch = (seq1, seq2) => {
