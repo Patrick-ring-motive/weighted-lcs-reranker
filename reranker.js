@@ -37,8 +37,8 @@ function lcs(seq1, seq2) {
 }
 
 function unorderedWindowOverlap(seq1, seq2) {
-    let pattern = typeof seq1 === 'string' ? seq1 : [...(seq1 ?? [])];
-    let text = typeof seq2 === 'string' ? seq2 : [...(seq2 ?? [])];
+    let pattern = [...(seq1 ?? [])];
+    let text = [...(seq2 ?? [])];
     if (text.length < pattern.length) [pattern, text] = [text, pattern];
 
     const patternLength = pattern.length;
@@ -86,7 +86,7 @@ const boundedLcs = (seq1, seq2) => {
 };
 
 const lcsMatch = (seq1, seq2) => {
-  return boundedLcs(seq1, seq2) >= Math.floor(Math.max(seq1.length, seq2.length) * 0.8);
+  return boundedLcs(seq1, seq2) >= Math.floor(Math.max(seq1?.length || 0, seq2?.length || 0) * 0.8);
 };
 
 const weightedLcs = (seq1 = [], seq2 = []) => {
@@ -97,10 +97,10 @@ const weightedLcs = (seq1 = [], seq2 = []) => {
   );
 };
 
-export const lcsInfo = (se1, seq2) => {
+export const lcsInfo = (seq1, seq2) => {
   const minLength = Math.min(seq1?.length || 0, seq2?.length || 0) || 0;
   const maxLength = Math.max(seq1?.length || 0, seq2?.length || 0) || 0;
-  const lcsLength = lcs(seq1, seq2);
+  const lcsLength = boundedLcs(seq1, seq2);
   const lcsMatch = lcsLength >= Math.floor(0.8 * maxLength);
   const lcsWeight = lcsLength * minLength / (maxLength || Math.MIN_SAFE_INTEGER);
   return {
