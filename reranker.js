@@ -1,14 +1,22 @@
 function lcsAlign(seq1, seq2) {
   "use strict";
-  const none = { length: 0, a: [], b: [] };
+  const none = {
+    length: 0,
+    a: [],
+    b: []
+  };
   if (seq1 == null || seq2 == null) return none;
   if (seq1 === seq2) {
     const all = [...seq1];
-    return { length: all.length, a: all, b: all };
+    return {
+      length: all.length,
+      a: all,
+      b: all
+    };
   }
   let long = [...seq1];
   let short = [...seq2];
-  if (short.length > long.length) [long, short] = [short, long];
+  if (short.length > long.length)[long, short] = [short, long];
 
   const n = long.length;
   const m = short.length;
@@ -17,13 +25,17 @@ function lcsAlign(seq1, seq2) {
 
   const mk = () => ({
     len: new Uint32Array(width),
-    s1: new Int32Array(width), s2: new Int32Array(width),
-    e1: new Int32Array(width), e2: new Int32Array(width),
+    s1: new Int32Array(width),
+    s2: new Int32Array(width),
+    e1: new Int32Array(width),
+    e2: new Int32Array(width),
   });
   const copy = (dst, x, src, y) => {
     dst.len[x] = src.len[y];
-    dst.s1[x] = src.s1[y]; dst.s2[x] = src.s2[y];
-    dst.e1[x] = src.e1[y]; dst.e2[x] = src.e2[y];
+    dst.s1[x] = src.s1[y];
+    dst.s2[x] = src.s2[y];
+    dst.e1[x] = src.e1[y];
+    dst.e2[x] = src.e2[y];
   };
 
   let prev = mk();
@@ -51,7 +63,9 @@ function lcsAlign(seq1, seq2) {
         copy(curr, x, prev, x);
       }
     }
-    const tmp = prev; prev = curr; curr = tmp;
+    const tmp = prev;
+    prev = curr;
+    curr = tmp;
   }
 
   const length = prev.len[m];
@@ -66,11 +80,14 @@ function lcsAlign(seq1, seq2) {
 // unorderedWindowOverlap unchanged
 
 const boundedLcs = (seq1, seq2) => {
-  const { length, a, b } = lcsAlign(seq1, seq2);
+  const {
+    length,
+    a,
+    b
+  } = lcsAlign(seq1, seq2);
   if (!length) return 0;
   return Math.min(unorderedWindowOverlap(a, b), length);
 };
-
 
 function unorderedWindowOverlap(seq1, seq2) {
   let pattern = [...(seq1 ?? [])];
