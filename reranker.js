@@ -134,12 +134,16 @@ export const lcsInfo = (seq1, seq2) => {
   const maxLength = Math.max(seq1?.length || 0, seq2?.length || 0) || 0;
   const lcsLength = boundedLcs(seq1, seq2);
   const lcsMatch = lcsLength >= Math.floor(0.8 * maxLength);
+  const lcsContains = lcsLength >= Math.floor(0.8 * minLength);
+  const lcsRatio = minLength ? lcsLength / minLength : 0;
   const lcsWeight = lcsLength * minLength / (maxLength || Math.MIN_SAFE_INTEGER);
   return {
     minLength,
     maxLength,
     lcsLength,
     lcsMatch,
+    lcsContains,
+    lcsRatio,
     lcsWeight
   };
 };
