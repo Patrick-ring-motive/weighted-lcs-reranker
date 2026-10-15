@@ -188,3 +188,12 @@ export const rank = (query = "", results = []) => {
     })
     .sort((x, y) => y?.score - x?.score);
 };
+
+
+export const fixQuery = (query, text) => {
+  return query.replace(/\S+/g, word =>
+    getBestWord(word, text) || word.replace(/\b\w+\b/g, part =>
+      part === word ? part : getBestWord(part, text) || part
+    )
+  );
+};
