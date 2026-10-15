@@ -166,7 +166,7 @@ export const lcsInfo = (seq1, seq2) => {
 };
 
 export const getBestWord = (word, text) => {
-  const words = [...new Set([...text.split(/\s+/),...text.match(/\b\w+\b/g) || []].map(x=>x.trim()).filter(Boolean))];
+  const words = [...new Set([...text.split(/\s+/), ...text.match(/\b\w+\b/g) || []].map(x => x.trim()).filter(Boolean))];
   let bestWord = '';
   let bestScore = 0;
   for (const candidate of words) {
@@ -188,7 +188,6 @@ export const rank = (query = "", results = []) => {
     })
     .sort((x, y) => y?.score - x?.score);
 };
-
 
 export const fixQuery = (query, text) => {
   return query.replace(/\S+/g, word =>
