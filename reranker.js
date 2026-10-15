@@ -150,8 +150,8 @@ export const lcsInfo = (seq1, seq2) => {
   const minLength = Math.min(seq1?.length || 0, seq2?.length || 0) || 0;
   const maxLength = Math.max(seq1?.length || 0, seq2?.length || 0) || 0;
   const lcsLength = boundedLcs(seq1, seq2);
-  const lcsMatch = lcsLength >= Math.floor(0.8 * maxLength);
-  const lcsContains = lcsLength >= Math.floor(0.8 * minLength);
+  const lcsMatch = lcsLength && lcsLength >= Math.floor(0.8 * maxLength);
+  const lcsContains = lcsLength && lcsLength >= Math.floor(0.8 * minLength);
   const lcsRatio = minLength ? lcsLength / minLength : 0;
   const lcsWeight = lcsLength * minLength / (maxLength || Math.MIN_SAFE_INTEGER);
   return {
@@ -163,6 +163,21 @@ export const lcsInfo = (seq1, seq2) => {
     lcsRatio,
     lcsWeight
   };
+};
+
+export const getBestWord = (word, text) => {
+  const words = [...new Set([...text.split(/\s+/),...text.match(/\b\w+\b/g) || []].map(x=>x.trim()).filter(Boolean))];
+  let bestWord = '';
+  let bestScore = 0;
+  for (const candidate of words) {
+    const info = lcsInfo(word, candidate);
+    const score = info.lcsWeight;
+    if (info.lcsMatch && score > bestScore) {
+      bestScore = score;
+      bestWord = candidate;
+    }
+  }
+  return bestWord;
 };
 
 export const rank = (query = "", results = []) => {
